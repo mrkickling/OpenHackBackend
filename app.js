@@ -4,6 +4,13 @@
 // node.js starter application for Bluemix
 //------------------------------------------------------------------------------
 
+var mongoClient = require("mongodb").MongoClient;
+mongoClient.connect("mongodb://rodakors:brptcIFNG0G20zgpbOW8eOShgAwIbksk2tvOJK6NLY21GPO45iNGrTGzfkmwjK42okDpWGWcm2BgYbKoorzQMQ==@rodakors.documents.azure.com:10250/?ssl=true", function (err, db) {
+  db.close();
+    console.log(db);
+});
+
+
 // This application uses express as its web server
 // for more info, see: http://expressjs.com
 var express = require('express');
