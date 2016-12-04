@@ -2,40 +2,37 @@
 
 //------------------------------------------------------------------------------
 // node.js starter application for Bluemix
-//------------------------------------------------------------------------------
-
-var mongoClient = require("mongodb").MongoClient;
-mongoClient.connect("mongodb://rodakors:brptcIFNG0G20zgpbOW8eOShgAwIbksk2tvOJK6NLY21GPO45iNGrTGzfkmwjK42okDpWGWcm2BgYbKoorzQMQ==@rodakors.documents.azure.com:10250/?ssl=true", function (err, db) {
-  db.close();
-    console.log(db);
-});
-
-
-// This application uses express as its web server
-// for more info, see: http://expressjs.com
+//-----------------------------------------------------------------------
+// create a new express server
 var express = require('express');
-
-// cfenv provides access to your Cloud Foundry environment
-// for more info, see: https://www.npmjs.com/package/cfenv
+var app = require('express')();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 var cfenv = require('cfenv');
 
-// create a new express server
-var app = express();
+var appEnv = cfenv.getAppEnv();
+
+// Serve files from ./public
+app.use(express.static('public'));
+
+// start server on the specified port and binding host
+server.listen(appEnv.port, '0.0.0.0', function() {
+  // print a message when the server starts listening
+    console.log("server starting on " + appEnv.url);
+});
+
+io.on('connection', function(client){
+    console.log('conoect');
+    client.on('request', function(data){
+        io.emit('newRequest', data);
+        console.log('req')
+    })
+    
+})
 
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 
 // get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
 
-// start server on the specified port and binding host
-app.listen(appEnv.port, '0.0.0.0', function() {
-  // print a message when the server starts listening
-  console.log("server starting on " + appEnv.url);
-});
 
-app.get('/getEvents', function(req, res){
-    
-    /* Gör en request till databasen... */
-    res.send('hello hih');
-})
